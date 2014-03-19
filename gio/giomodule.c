@@ -897,6 +897,7 @@ extern GType _g_network_monitor_netlink_get_type (void);
 extern GType g_fdo_notification_backend_get_type (void);
 extern GType g_gtk_notification_backend_get_type (void);
 #endif
+extern GType g_gntp_notification_backend_get_type (void);
 
 #ifdef G_PLATFORM_WIN32
 
@@ -1080,6 +1081,7 @@ _g_io_modules_ensure_loaded (void)
       g_type_ensure (g_fdo_notification_backend_get_type ());
       g_type_ensure (g_gtk_notification_backend_get_type ());
 #endif
+      g_type_ensure (g_gntp_notification_backend_get_type ());
 #ifdef G_OS_WIN32
       g_type_ensure (_g_winhttp_vfs_get_type ());
 #endif
