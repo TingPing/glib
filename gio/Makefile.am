@@ -216,6 +216,7 @@ local_sources = \
 platform_libadd =
 platform_deps =
 appinfo_sources =
+appinfo_headers =
 contenttype_sources =
 
 if HAVE_INOTIFY
@@ -246,9 +247,11 @@ if OS_UNIX
 if !OS_COCOA
 platform_libadd += xdgmime/libxdgmime.la
 platform_deps += xdgmime/libxdgmime.la
-endif
 
 appinfo_sources += gdesktopappinfo.c
+appinfo_headers += gdesktopappinfo.h
+endif
+
 
 unix_sources = \
 	gfiledescriptorbased.c  \
@@ -274,7 +277,6 @@ unix_sources = \
 
 giounixincludedir=$(includedir)/gio-unix-2.0/gio
 giounixinclude_HEADERS = \
-	gdesktopappinfo.h	\
 	gfiledescriptorbased.h  \
 	gunixconnection.h	\
 	gunixcredentialsmessage.h	\
@@ -284,6 +286,7 @@ giounixinclude_HEADERS = \
 	gunixinputstream.h 	\
 	gunixoutputstream.h 	\
 	gunixsocketaddress.h	\
+	$(appinfo_headers) \
 	$(NULL)
 
 if HAVE_NETLINK
@@ -341,11 +344,13 @@ endif
 
 if OS_COCOA
 contenttype_sources += gnextstepcontenttype.c
+appinfo_sources += gnextstepappinfo.c gnextstepappinfo.h
 endif
 
 if OS_UNIX
 if !OS_COCOA
 contenttype_sources += gcontenttype.c
+appinfo_sources += gdesktopappinfo.c
 endif
 endif
 
@@ -763,6 +768,7 @@ gdbus_LDADD = libgio-2.0.la 				\
 	$(NULL)
 
 if OS_UNIX
+if !OS_COCOA
 # ------------------------------------------------------------------------
 # gapplication(1) tool
 bin_PROGRAMS += gapplication
@@ -771,6 +777,7 @@ gapplication_LDADD = libgio-2.0.la 			\
 	$(top_builddir)/gobject/libgobject-2.0.la	\
 	$(top_builddir)/glib/libglib-2.0.la		\
 	$(NULL)
+endif
 endif
 
 completiondir = $(datadir)/bash-completion/completions
