@@ -1,5 +1,5 @@
 project('glib', 'c', 'cpp',
-  version : '2.48.0',
+  version : '2.48.1',
   meson_version : '>= 0.32.0',
   default_options : [ 'warning_level=1',
                       'c_std=gnu89',
@@ -46,8 +46,9 @@ gioinc = include_directories('gio')
 
 glib_prefix = get_option('prefix')
 glib_libdir = glib_prefix + '/' + get_option('libdir')
-glib_datadir = glib_prefix + '/share'
-glib_includedir = glib_prefix + '/include'
+glib_datadir = glib_prefix + '/' + get_option('datadir')
+glib_pkgdatadir = glib_datadir + '/glib-2.0'
+glib_includedir = glib_prefix + '/' + get_option('includedir')
 glib_giomodulesdir = glib_libdir + '/gio/modules'
 
 glib_pkgconfigreldir = get_option('libdir') + '/pkgconfig'
@@ -1330,6 +1331,7 @@ subdir('gobject')
 subdir('gthread')
 subdir('gmodule')
 subdir('gio')
+subdir('po')
 
 # Configure and install pkg-config files
 pc_files = [
@@ -1371,3 +1373,7 @@ install_data('m4macros/glib-2.0.m4', 'm4macros/glib-gettext.m4', 'm4macros/gsett
 configure_file(input : 'config.h.meson',
   output : 'config.h',
   configuration : glib_conf)
+
+if get_option('with-docs')
+  subdir('docs/reference/glib')
+endif
