@@ -28,6 +28,7 @@ host_system = host_machine.system()
 #add_global_arguments('-Werror', language : 'c') # FIXME
 
 glib_version = meson.project_version()
+glib_api_version = '2.0'
 version_arr = glib_version.split('.')
 major_version = version_arr[0]
 minor_version = version_arr[1]
@@ -1374,6 +1375,7 @@ configure_file(input : 'config.h.meson',
   output : 'config.h',
   configuration : glib_conf)
 
-if get_option('with-docs')
-  subdir('docs/reference/glib')
-endif
+
+gnome = import('gnome')
+subdir('docs/reference/glib')
+subdir('docs/reference/gio')

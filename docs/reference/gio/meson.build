@@ -1,0 +1,148 @@
+if not meson.version().version_compare('>= 0.37.0')
+  error('In order to build docs you must have Meson >= 0.37.0')
+else
+
+subdir('xml')
+
+ignore_headers = [
+  'fam',
+  'fen',
+  'gdbus-2.0',
+  'gvdb',
+  'inotify',
+  'kqueue',
+  'libasyncns',
+  'tests',
+  'win32',
+  'xdgmime',
+  'gappinfoprivate.h',
+  'gapplicationimpl.h',
+  'gasynchelper.h',
+  'gcontenttypeprivate.h',
+  'gcontextspecificgroup.h',
+  'gcredentialsprivate.h',
+  'gdbus-daemon-generated.h',
+  'gdbusactiongroup-private.h',
+  'gdbusauth.h',
+  'gdbusauthmechanismanon.h',
+  'gdbusauthmechanismexternal.h',
+  'gdbusauthmechanism.h',
+  'gdbusauthmechanismsha1.h',
+  'gdbusdaemon.h',
+  'gdbusprivate.h',
+  'gdelayedsettingsbackend.h',
+  'gdummyfile.h',
+  'gdummyproxyresolver.h',
+  'gdummytlsbackend.h',
+  'gfileattribute-priv.h',
+  'gfileinfo-priv.h',
+  'ghttpproxy.h',
+  'giomodule-priv.h',
+  'gioprivate.h',
+  'giowin32-priv.h',
+  'glocaldirectorymonitor.h',
+  'glocalfileenumerator.h',
+  'glocalfile.h',
+  'glocalfileinfo.h',
+  'glocalfileinputstream.h',
+  'glocalfileiostream.h',
+  'glocalfilemonitor.h',
+  'glocalfileoutputstream.h',
+  'glocalvfs.h',
+  'gmountprivate.h',
+  'gnativevolumemonitor.h',
+  'gnetworkingprivate.h',
+  'gnetworkmonitorbase.h',
+  'gnetworkmonitornetlink.h',
+  'gnetworkmonitornm.h',
+  'gnotificationbackend.h',
+  'gnotification-private.h',
+  'gpollfilemonitor.h',
+  'gregistrysettingsbackend.h',
+  'gresourcefile.h',
+  'gsettingsbackendinternal.h',
+  'gsettings-mapping.h',
+  'gsettingsschema-internal.h',
+  'gsocketinputstream.h',
+  'gsocketoutputstream.h',
+  'gsocks4aproxy.h',
+  'gsocks4proxy.h',
+  'gsocks5proxy.h',
+  'gsubprocesslauncher-private.h',
+  'gthreadedresolver.h',
+  'gunionvolumemonitor.h',
+  'gunixmount.h',
+  'gunixresolver.h',
+  'gunixvolume.h',
+  'gunixvolumemonitor.h',
+  'gwin32appinfo.h',
+  'gwin32mount.h',
+  'gwin32resolver.h',
+  'gwin32volumemonitor.h',
+  'thumbnail-verify.h'
+]
+
+docpath = join_paths(glib_datadir, 'gtk-doc', 'html')
+version_conf = configuration_data()
+version_conf.set('VERSION', meson.project_version())
+configure_file(
+  input: 'version.xml.in',
+  output: 'version.xml',
+  configuration: version_conf
+)
+
+message('here')
+gnome.gtkdoc('gio',
+  main_xml : 'gio-docs.xml',
+  namespace : 'g',
+  gobject_typesfile : 'gio.types',
+  mode : 'none',
+  dependencies : ['fjaf', libgio_dep, libgobject_dep, 'faf'],
+  src_dir : [
+    # TODO: Cleanup upstream
+    join_paths(meson.source_root(), 'gio'),
+    join_paths(meson.build_root(), 'gio'),
+  ],
+  dependencies : libglib_dep,
+  scan_args : [
+    '--rebuild-types',
+    '--deprecated-guards=G_DISABLE_DEPRECATED',
+    '--ignore-decorators=G_GNUC_WARN_UNUSED_RESULT',
+    '--ignore-headers=' + ' '.join(ignore_headers),
+  ],
+  content_files : [
+    'overview.xml',
+    'migrating-posix.xml',
+    'migrating-gnome-vfs.xml',
+    'migrating-gconf.xml',
+    'migrating-gdbus.xml',
+    'gio-querymodules.xml',
+    'glib-compile-schemas.xml',
+    'glib-compile-resources.xml',
+    'gapplication.xml',
+    'gsettings.xml',
+    'gresource.xml',
+    'gdbus.xml',
+    'gdbus-codegen.xml',
+  ],
+  expand_content_files : [
+    'overview.xml',
+    'migrating-posix.xml',
+    'migrating-gnome-vfs.xml',
+    'migrating-gconf.xml',
+    'migrating-gdbus.xml',
+    'gdbus-codegen.xml',
+  ],
+  html_assets : [
+    'gvfs-overview.png',
+    'menu-example.png',
+    'menu-model.png',
+  ],
+  fixxref_args: [
+    '--html-dir=' + docpath,
+    '--extra-dir=' + join_paths(meson.current_build_dir(), '../glib/html'),
+    '--extra-dir=' + join_paths(meson.current_build_dir(), '../gobject/html'),
+  ],
+  install: true
+)
+endif
